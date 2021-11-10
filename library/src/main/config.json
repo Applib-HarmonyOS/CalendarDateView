@@ -1,0 +1,24 @@
+{
+  "app": {
+    "bundleName": "com.karan24X7.calendardateview",
+    "vendor": "karan24x7",
+    "version": {
+      "code": 1000000,
+      "name": "1.0.0"
+    }
+  },
+  "deviceConfig": {
+  },
+  "module": {
+    "package": "com.yyx.library",
+    "deviceType": [
+      "phone",
+      "tablet"
+    ],
+    "distro": {
+      "deliveryWithInstall": true,
+      "moduleName": "library",
+      "moduleType": "har"
+    }
+  }
+}

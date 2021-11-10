@@ -1,100 +1,70 @@
-# CalendarDateView
-一个Android日期选择控件，支持无限滑动
-## 效果图：
-![效果图](https://github.com/xingxing-yan/CalendarDateView/blob/master/git/CalendarDemo.gif)
-## 添加依赖：
-在项目的build.gradle中添加：
+[![Build](https://github.com/applibgroup/MaterialCalendar/actions/workflows/main.yml/badge.svg)](https://github.com/applibgroup/MaterialCalendar/actions/workflows/main.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=applibgroup_MaterialCalendar&metric=alert_status)](https://sonarcloud.io/dashboard?id=applibgroup_MaterialCalendar)
+
+# Calendar Date View
+An Android date selection control, supporting unlimited sliding.
+<p>
+	<image src = "/demo.png" width = 320 height = 512)/></image>
+</p>
+
+# Source
+This library has been inspired by [xingxing-yan\\CalendarDateView](https://github.com/xingxing-yan/CalendarDateView).
+
+## Integration
+
+1. For using MaterialCalendar module in sample app, include the source code and add the below dependencies in entry/build.gradle to generate hap/support.har.
 ```
-# CalendarDateView
-[![Build](https://github.com/applibgroup/CalendarDateView/actions/workflows/main.yml/badge.svg)](https://github.com/applibgroup/CalendarDateView/actions/workflows/main.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=applibgroup_CalendarDateView&metric=alert_status)](https://sonarcloud.io/dashboard?id=applibgroup_CalendarDateView)
-allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+ implementation project(path: ':library')
 ```
- 在应用的build.gradle中添加：
- ```
- compile 'com.github.xingxing-yan:CalendarDateView:1.0.0'
- ```
-## 使用方式：
-使用起来也非常方便， 只需要在布局文件中加入如下代码即可：
+2. For using MaterialCalendar module in separate application using har file, add the har file in the entry/libs folder and add the dependencies in entry/build.gradle file.
 ```
- <com.yyx.library.WeekDayView
-       android:id="@+id/main_wdv"
-       android:layout_width="match_parent"
-       android:layout_height="40dp"
-       app:top_line_color="@color/black"
-       app:bottom_line_color="@color/black"
-       app:work_day_color="@color/black"
-       app:weekend_day_color="@android:color/holo_red_light" />
+ implementation fileTree(dir: 'libs', include: ['*.har'])
+```
+3. For using MaterialCalendar module from a remote repository in separate application, add the below dependencies in entry/build.gradle file.
+```
+implementation 'dev.applibgroup:calendardateview:1.0.0'
+```
+
+## Usage
+ 1. Add CalendarView into your layouts or view hierarchy.
+
+Example:
+
+```xml
+    <com.yyx.library.WeekDayView
+           android:id="@+id/main_wdv"
+           android:layout_width="match_parent"
+           android:layout_height="40dp"
+           app:top_line_color="@color/black"
+           app:bottom_line_color="@color/black"
+           app:work_day_color="@color/black"
+           app:weekend_day_color="@android:color/holo_red_light" />
+        
     <com.yyx.library.CalendarDateView
-        android:id="@+id/main_cdv"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        app:current_day_color="@android:color/holo_red_light"
-        app:day_color="@color/black"
-        app:select_day_color="@color/white"
-        app:select_day_bg_color="@android:color/holo_green_light"
-        app:shape_type="circle"/>
-        
+            android:id="@+id/main_cdv"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:current_day_color="@android:color/holo_red_light"
+            app:day_color="@color/black"
+            app:select_day_color="@color/white"
+            app:select_day_bg_color="@android:color/holo_green_light"
+            app:shape_type="circle"/>
 ```
-        
-WeekDayView周一到周日的文字控件，支持设置周末颜色和工作日的颜色。<br/>
-CalendarDateView是日期选择控件，支持日期颜色设置和选中日期的颜色，选择日期的背景色等<br/>
-注意：WeekDayView和CalendarDateView的高度需要一个固定值，不能设置为wrap_content
-```
-mCdv.setDateTextView(mTvDate);
-```
+Check the example app for more information.
 
-设置一个TextView展示当前选中的日期
+## License
 
-## 监听日期的点击事件
+	Copyright (c) Josue Mavarez 2017
 
-```
-mCdv.setOnItemClickListener(new CalendarDateView.OnItemClickListener() {
-  @Override
-  public void onItemClick(int year, int month, int day) {
-    String date = year + "-" + (month+1) + "-" + day;
-    Toast.makeText(MainActivity.this, date, Toast.LENGTH_SHORT).show();
-  }
-});
-   
-```
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
 
-## 自定义属性列表：
+	http://www.apache.org/licenses/LICENSE-2.0
 
-```
-<declare-styleable name="WeekDayView">
-        <!--上横线颜色-->
-        <attr name="top_line_color" format="color"/>
-        <!--下横线颜色-->
-        <attr name="bottom_line_color" format="color"/>
-        <!--工作日颜色-->
-        <attr name="work_day_color" format="color"/>
-        <!--周末颜色-->
-        <attr name="weekend_day_color" format="color"/>
-       <!--是否画上下横向-->
-        <attr name="is_draw_t_b_line" format="boolean"/>
-    </declare-styleable>
-    <declare-styleable name="MonthDateView">
-        <!--当天的颜色-->
-        <attr name="current_day_color" format="color"/>
-        <!--其他日期的颜色-->
-        <attr name="day_color" format="color"/>
-        <!--被选中日期的颜色-->
-        <attr name="select_day_color" format="color"/>
-        <!--被选中日期的背景色-->
-        <attr name="select_day_bg_color" format="color"/>
-        <!--提示点的颜色-->
-        <attr name="tip_color" format="color"/>
-        <!--被选中日期的背景形状-->
-        <attr name="shape_type" format="enum">
-            <enum name="rect" value="0"/>
-            <enum name="circle" value="1"/>
-        </attr>
-    </declare-styleable>
-    
-```
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+

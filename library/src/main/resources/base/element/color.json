@@ -1,0 +1,72 @@
+{
+  "color": [
+    {
+      "name": "colorPrimary",
+      "value": "#3F51B5"
+    },
+    {
+      "name": "black",
+      "value": "#000000"
+    },
+    {
+      "name": "white",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "Blue",
+      "value": "#0000FF"
+    },
+    {
+      "name": "colorPrimaryDark",
+      "value": "#303F9F"
+    },
+    {
+      "name": "colorAccent",
+      "value": "#FF4081"
+    },
+    {
+      "name": "colorPrimaryText",
+      "value": "#212121"
+    },
+    {
+      "name": "colorSecondaryText",
+      "value": "#757575"
+    },
+    {
+      "name": "default_top_line_color",
+      "value": "#CCE4F2"
+    },
+    {
+      "name": "default_bottom_line_color",
+      "value": "#CCE4F2"
+    },
+    {
+      "name": "default_work_day_color",
+      "value": "#1FC2F3"
+    },
+    {
+      "name": "default_weekend_color",
+      "value": "#fa4451"
+    },
+    {
+      "name": "default_current_day_color",
+      "value": "#ff0000"
+    },
+    {
+      "name": "default_day_color",
+      "value": "#000000"
+    },
+    {
+      "name": "default_selected_day_color",
+      "value": "#ffffff"
+    },
+    {
+      "name": "default_selected_day_bg_color",
+      "value": "#1FC2F3"
+    },
+    {
+      "name": "default_tip_color",
+      "value": "#ff0000"
+    }
+  ]
+}

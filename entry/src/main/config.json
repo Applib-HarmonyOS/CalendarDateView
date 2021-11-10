@@ -1,0 +1,47 @@
+{
+  "app": {
+    "bundleName": "com.karan24X7.calendardateview",
+    "vendor": "karan24X7",
+    "version": {
+      "code": 1000000,
+      "name": "1.0.0"
+    }
+  },
+  "deviceConfig": {},
+  "module": {
+    "package": "com.yyx.calendardateview",
+    "name": ".MyApplication",
+    "mainAbility": "com.yyx.calendardateview.MainAbility",
+    "deviceType": [
+      "phone",
+      "tablet",
+      "tv"
+    ],
+    "distro": {
+      "deliveryWithInstall": true,
+      "moduleName": "entry",
+      "moduleType": "entry",
+      "installationFree": false
+    },
+    "abilities": [
+      {
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ],
+        "name": "com.yyx.calendardateview.MainAbility",
+        "icon": "$media:icon",
+        "description": "$string:mainability_description",
+        "label": "$string:CalendardateView",
+        "type": "page",
+        "launchType": "standard"
+      }
+    ]
+  }
+}

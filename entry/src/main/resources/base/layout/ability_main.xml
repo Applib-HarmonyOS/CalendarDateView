@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    xmlns:app="http://schemas.huawei.com/hap/res-auto"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:orientation="vertical">
+
+    <Text
+        ohos:id="$+id:main_date"
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:layout_alignment="center"
+        ohos:text_size="50px"
+        />
+
+    <com.yyx.library.WeekDayView
+        ohos:id="$+id:main_wdv"
+        ohos:height="100px"
+        ohos:width="match_parent"
+        />
+
+    <com.yyx.library.CalendarDateView
+        ohos:id="$+id:main_cdv"
+        ohos:height="600px"
+        ohos:width="match_parent"
+        app:shape_type="circle"
+        app:tip_color="$color:black"
+        />
+</DirectionalLayout>
