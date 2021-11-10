@@ -1,197 +1,194 @@
 package com.yyx.library;
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import ohos.agp.components.*;
+
+import ohos.agp.utils.Color;
+import ohos.app.Context;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Created by Administrator on 2017/1/13.
- * 日历滑动控件
+ * Calendar sliding control
  */
 
-public class CalendarDateView extends ViewPager {
-    public static final int RECT_SEL_BG = 0;    //矩形背景
-    public static final int CIRCLE_SEL_BG = 1;  //圆形背景
-    //当天的日期颜色
-    private final int DEF_CURRENT_DAY_COLOR = Color.parseColor("#ff0000");
-    //其他日期的颜色
-    private final int DEF_DAY_COLOR = Color.parseColor("#000000");
-    //选中日期的颜色
-    private final int DEF_SEL_DAY_COLOR =  Color.parseColor("#ffffff");
-    //选中日期的背景色
-    private final int DEF_SEL_BG_COLOR = Color.parseColor("#1FC2F3");
-    //标记某天提示点的颜色
-    private final int DEF_TIP_COLOR = Color.parseColor("#ff0000");
+public class CalendarDateView extends PageSlider implements PageSlider.PageChangedListener {
+    //attributes
+    private static final String CURRENT_DAY_COLOR = "current_day_color";
+    private static final String DAY_COLOR = "day_color";
+    private static final String SELECTED_DAY_COLOR = "selected_day_color";
+    private static final String SELECTED_DAY_BG_COLOR = "selected_day_bg_color";
+    private static final String TIP_COLOR = "tip_color";
+    private static final String SHAPE_TYPE = "shape_type";
 
-    private int mBgShape;
-    private int mDayColor;
-    private int mSelectDayColor;
-    private int mSelectBGColor;
-    private int mCurrentColor;
-    private int mTipColor;
 
-    private MonthDateView.DateClick onDateClickListener;
-    HashMap<Integer, MonthDateView> views = new HashMap<>();
-    private LinkedList<MonthDateView> cache = new LinkedList();
+    private MonthDateComponent.ShapeType mBgShape = MonthDateComponent.ShapeType.CIRCLE;
+    private Color mDayColor;
+    private Color mSelectDayColor;
+    private Color mSelectBGColor;
+    private Color mCurrentColor;
+    private Color mTipColor;
+
+    private MonthDateComponent.DateClick onDateClickListener;
+    HashMap<Integer, MonthDateComponent> views = new HashMap<>();
+
+    private LinkedList<MonthDateComponent> cache = new LinkedList<>();
 
     private OnItemClickListener onItemClickListener;
 
-    private int mCurrentPos = Integer.MAX_VALUE/2;
-    private TextView mTvDate;
+    private int mCurrentPos = Integer.MAX_VALUE / 2;
+    private Text mTvDate;
     private int mSelYear, mSelMonth, mSelDay;
 
     public CalendarDateView(Context context) {
-       this(context, null);
-    }
-
-    public CalendarDateView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MonthDateView);
-        mCurrentColor = a.getColor(R.styleable.MonthDateView_current_day_color, DEF_CURRENT_DAY_COLOR);
-        mDayColor = a.getColor(R.styleable.MonthDateView_day_color, DEF_DAY_COLOR);
-        mSelectDayColor = a.getColor(R.styleable.MonthDateView_select_day_color, DEF_SEL_DAY_COLOR);
-        mSelectBGColor = a.getColor(R.styleable.MonthDateView_select_day_bg_color, DEF_SEL_BG_COLOR);
-        mTipColor = a.getColor(R.styleable.MonthDateView_tip_color, DEF_TIP_COLOR);
-        mBgShape = a.getInt(R.styleable.MonthDateView_shape_type, CIRCLE_SEL_BG);
-        a.recycle();
+        super(context);
         init();
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener){
+    public CalendarDateView(Context context, AttrSet attrs) {
+        super(context, attrs);
+        if (attrs.getAttr(CURRENT_DAY_COLOR).isPresent()) {
+            mCurrentColor = attrs.getAttr(CURRENT_DAY_COLOR).get().getColorValue();
+        }
+
+        if (attrs.getAttr(DAY_COLOR).isPresent()) {
+            mDayColor = attrs.getAttr(DAY_COLOR).get().getColorValue();
+        }
+
+        if (attrs.getAttr(SELECTED_DAY_COLOR).isPresent()) {
+            mSelectDayColor = attrs.getAttr(SELECTED_DAY_COLOR).get().getColorValue();
+        }
+
+        if (attrs.getAttr(SELECTED_DAY_BG_COLOR).isPresent()) {
+            mSelectBGColor = attrs.getAttr(SELECTED_DAY_BG_COLOR).get().getColorValue();
+        }
+
+        if (attrs.getAttr(TIP_COLOR).isPresent()) {
+            mTipColor = attrs.getAttr(TIP_COLOR).get().getColorValue();
+        }
+
+        if (attrs.getAttr(SHAPE_TYPE).isPresent()) {
+            mBgShape = MonthDateComponent.ShapeType.valueOf(attrs.getAttr(SHAPE_TYPE).get().getStringValue().toUpperCase());
+        }
+        init();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
 
-    public void setDateTextView(TextView date){
+    public OnItemClickListener getOnItemClickListener() {
+        return onItemClickListener;
+    }
+
+    public void setDateTextView(Text date) {
         this.mTvDate = date;
         mTvDate.setText(geSelectedDate());
     }
 
-    private void init(){
+    private void init() {
         Calendar calendar = Calendar.getInstance();
         mSelYear = calendar.get(Calendar.YEAR);
         mSelMonth = calendar.get(Calendar.MONTH);
         mSelDay = calendar.get(Calendar.DATE);
 
-        onDateClickListener = new MonthDateView.DateClick() {
-            @Override
-            public void onClickOnDate(int year, int month, int day) {
-                mSelYear = year;
-                mSelMonth = month;
-                mSelDay = day;
-                if (mTvDate != null){
-                    mTvDate.setText(geSelectedDate());
-                }
-                if (onItemClickListener != null){
-                    onItemClickListener.onItemClick(mSelYear, mSelMonth, mSelDay);
-                }
+        onDateClickListener = (year, month, day) -> {
+            mSelYear = year;
+            mSelMonth = month;
+            mSelDay = day;
+            if (mTvDate != null) {
+                mTvDate.setText(geSelectedDate());
+            }
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(mSelYear, mSelMonth, mSelDay);
             }
         };
 
-        setAdapter(new PagerAdapter() {
+        setProvider(new PageSliderProvider() {
             @Override
             public int getCount() {
-                //实现无限滑动
+                //for infinite scrolling
                 return Integer.MAX_VALUE;
             }
 
             @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return view == object;
-            }
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                MonthDateView view;
-                if (!cache.isEmpty()){
-                    view = cache.removeFirst();
-                }else{
-
-                    view = new MonthDateView(container.getContext());
-                    view.setmDayColor(mDayColor);
-                    view.setmSelectBGColor(mSelectBGColor);
-                    view.setmSelectDayColor(mSelectDayColor);
-                    view.setmCurrentColor(mCurrentColor);
-                    view.setmTipColor(mTipColor);
-                    view.setSelectedBgShape(mBgShape);
+            public Object createPageInContainer(ComponentContainer componentContainer, int position) {
+                MonthDateComponent component;
+                if (!cache.isEmpty()) {
+                    component = cache.removeFirst();
+                } else {
+                    component = new MonthDateComponent(componentContainer.getContext());
+                    setMonthColors(component);
                 }
-                view.setDateClick(onDateClickListener);
-                view.setSelectDate(mSelYear, mSelMonth, mSelDay);
-                container.addView(view);
-                views.put(position, view);
-                return view;
+                component.setDateClick(onDateClickListener);
+                component.setSelectDate(mSelYear, mSelMonth, mSelDay);
+                componentContainer.addComponent(component);
+                views.put(position, component);
+                return component;
             }
 
+
             @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView((View) object);
-                cache.addLast((MonthDateView) object);
+            public void destroyPageFromContainer(ComponentContainer componentContainer, int position, Object object) {
+                componentContainer.removeComponent((Component) object);
+                cache.addLast((MonthDateComponent) object);
                 views.remove(position);
             }
 
-        });
-        //设置初始位置在Integer.MAXVALUE的1/2处，因为日历可向前向后滑动
-        setCurrentItem(mCurrentPos);
-
-        addOnPageChangeListener(new SimpleOnPageChangeListener() {
-
             @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                MonthDateView view = views.get(position);
-                if (position > mCurrentPos){
-                    nextMonth(view);
-                }else if (position < mCurrentPos){
-                    previousMonth(view);
-                }
-
-                mCurrentPos = position;
-                if (mTvDate != null){
-                    mTvDate.setText(geSelectedDate());
-                }
+            public boolean isPageMatchToObject(Component component, Object object) {
+                return component == object;
             }
         });
 
+        //Set the initial position at 1/2 of Integer.MAXVALUE, because the calendar can slide forward and backward
+        setCurrentPage(mCurrentPos);
+
+        addPageChangedListener(this);
+
+    }
+
+    private void setMonthColors(MonthDateComponent component) {
+        if (mDayColor != null) component.setmDayColorMonth(mDayColor);
+        if (mSelectBGColor != null) component.setmSelectBGColorMonth(mSelectBGColor);
+        if (mSelectDayColor != null) component.setmSelectDayColorMonth(mSelectDayColor);
+        if (mCurrentColor != null) component.setmCurrentColorMonth(mCurrentColor);
+        if (mTipColor != null) component.setmTipColorMonth(mTipColor);
+        if (mBgShape != null) component.setSelectedBgShape(mBgShape);
     }
 
     /**
-     * 获取当前选中的日期
+     * Get the currently selected date
+     *
      * @return
      */
-    private String geSelectedDate(){
+    private String geSelectedDate() {
         StringBuilder sb = new StringBuilder();
         sb.append(mSelYear);
         sb.append("-");
-        sb.append(mSelMonth+1);
+        sb.append(mSelMonth + 1);
         sb.append("-");
         sb.append(mSelDay);
         return sb.toString();
     }
 
     /**
-     * 下一个月
+     * Next month
+     *
      * @param view
      */
-    private void nextMonth(MonthDateView view){
+    private void nextMonth(MonthDateComponent view) {
         int year = mSelYear;
         int month = mSelMonth;
         int day = mSelDay;
-        if(month == 11){//若果是12月份，则变成1月份
-            year = mSelYear+1;
+        if (month == 11) {//若果是12月份，则变成1月份
+            year = mSelYear + 1;
             month = 0;
-        }else{
+        } else {
             month++;
         }
-        if (day > DateUtils.getMonthDays(year, month)){
+        if (day > DateUtils.getMonthDays(year, month)) {
             day = DateUtils.getMonthDays(year, month);
         }
         mSelYear = year;
@@ -201,20 +198,21 @@ public class CalendarDateView extends ViewPager {
     }
 
     /**
-     * 上一个月
+     * Previous Month
+     *
      * @param view
      */
-    private void previousMonth(MonthDateView view){
+    private void previousMonth(MonthDateComponent view) {
         int year = mSelYear;
         int month = mSelMonth;
         int day = mSelDay;
-        if(month == 0){//若果是1月份，则变成12月份
-            year = mSelYear-1;
+        if (month == 0) {//若果是1月份，则变成12月份
+            year = mSelYear - 1;
             month = 11;
-        }else{
+        } else {
             month--;
         }
-        if (day > DateUtils.getMonthDays(year, month)){
+        if (day > DateUtils.getMonthDays(year, month)) {
             day = DateUtils.getMonthDays(year, month);
         }
         mSelYear = year;
@@ -223,7 +221,33 @@ public class CalendarDateView extends ViewPager {
         view.setSelectDate(mSelYear, mSelMonth, mSelDay);
     }
 
-    public interface OnItemClickListener{
+
+    @Override
+    public void onPageSliding(int i, float v, int i1) {
+        //Only onPageChosen needs to override
+    }
+
+    @Override
+    public void onPageSlideStateChanged(int i) {
+        //Only onPageChosen needs to override
+    }
+
+    @Override
+    public void onPageChosen(int position) {
+        MonthDateComponent view = views.get(position);
+        if (position > mCurrentPos) {
+            nextMonth(view);
+        } else if (position < mCurrentPos) {
+            previousMonth(view);
+        }
+
+        mCurrentPos = position;
+        if (mTvDate != null) {
+            mTvDate.setText(geSelectedDate());
+        }
+    }
+
+    public interface OnItemClickListener {
         void onItemClick(int year, int month, int day);
     }
 
@@ -251,51 +275,81 @@ public class CalendarDateView extends ViewPager {
         this.mSelDay = mSelDay;
     }
 
+    public Color getSelectDayColor() {
+        return mSelectDayColor;
+    }
+
+    public Color getSelectBGColor() {
+        return mSelectBGColor;
+    }
+
+    public Color getCurrentColor() {
+        return mCurrentColor;
+    }
+
     /**
-     * 设置选中日期背景形状
+     * Set the selected date background shape
+     *
      * @param mBgShape
      */
-    public void setBgShape(int mBgShape) {
+    public void setBgShape(MonthDateComponent.ShapeType mBgShape) {
         this.mBgShape = mBgShape;
     }
 
-    /**
-     * 设置其他日期颜色
-     * @param mDayColor
-     */
-    public void setDayColor(int mDayColor) {
-        this.mDayColor = mDayColor;
+    public MonthDateComponent.ShapeType getBgShape() {
+        return mBgShape;
     }
 
     /**
-     * 设置选中日期的颜色
+     * Set other date colors
+     *
+     * @param mDayColor
+     */
+    public void setDayColor(Color mDayColor) {
+        this.mDayColor = mDayColor;
+    }
+
+    public Color getDayColor() {
+        return mDayColor;
+    }
+
+    /**
+     * Set the color of the selected date
+     *
      * @param mSelectDayColor
      */
-    public void setSelectDayColor(int mSelectDayColor) {
+    public void setSelectDayColor(Color mSelectDayColor) {
         this.mSelectDayColor = mSelectDayColor;
     }
 
     /**
-     * 设置选中日期的背景色
+     * Set the background color of the selected date
+     *
      * @param mSelectBGColor
      */
-    public void setSelectBGColor(int mSelectBGColor) {
+    public void setSelectBGColor(Color mSelectBGColor) {
         this.mSelectBGColor = mSelectBGColor;
     }
 
     /**
-     * 设置当天日期颜色
+     * Set the color of today's date
+     *
      * @param mCurrentColor
      */
-    public void setCurrentColor(int mCurrentColor) {
+    public void setCurrentColor(Color mCurrentColor) {
         this.mCurrentColor = mCurrentColor;
     }
 
     /**
-     * 设置提示点颜色
+     * Set cue point color
+     *
      * @param mTipColor
      */
-    public void setTipColor(int mTipColor) {
+    public void setTipColor(Color mTipColor) {
         this.mTipColor = mTipColor;
+    }
+
+    public Color getTipColor() {
+        return mTipColor;
     }
 }
