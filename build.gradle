@@ -45,7 +45,7 @@ allprojects {
         configFile file("config/checkstyle.xml")
 
         source 'entry/src/main/java'
-        source 'YCSlideLib/src/main/java'
+        source 'CalendarDateView/src/main/java'
         include '**/*.java'
 
         // empty classpath
